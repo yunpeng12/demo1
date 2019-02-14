@@ -1,0 +1,6 @@
+一,使用springmvc开发restFul API
+-- 常用注解
+	@RestController 表明此Controller提供restAPI
+	@RequestMapping 及其变体,映射http请求url到java方法
+	@RequestParam 映射请求参数到java方法参数
+	@PageableDefault 指定分页参数默认值
