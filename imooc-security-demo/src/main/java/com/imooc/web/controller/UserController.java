@@ -10,11 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.imooc.dto.User;
 
+import io.swagger.annotations.ApiOperation;
+
 
 @RestController
 public class UserController {
 
 	@RequestMapping(value = "/user",method = RequestMethod.GET)
+	@ApiOperation(value = "用户查询")
 	public List<User> quert(@RequestParam() String userName){
 		List<User> users = new ArrayList<>();
 		users.add(new User());
