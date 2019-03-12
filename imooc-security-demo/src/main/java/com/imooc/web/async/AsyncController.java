@@ -3,8 +3,6 @@
  */
 package com.imooc.web.async;
 
-import java.util.concurrent.Callable;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
