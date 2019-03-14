@@ -6,6 +6,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SecurityProperties {
 
 	private BrowserProperties browser = new BrowserProperties();
+	
+	private ValidateCodeProperties validateCode = new ValidateCodeProperties();
+
+	public ValidateCodeProperties getValidateCode() {
+		return validateCode;
+	}
+
+	public void setValidateCode(ValidateCodeProperties validateCode) {
+		this.validateCode = validateCode;
+	}
 
 	public BrowserProperties getBrowser() {
 		return browser;

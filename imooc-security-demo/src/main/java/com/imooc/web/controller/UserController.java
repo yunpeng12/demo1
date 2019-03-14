@@ -3,6 +3,9 @@ package com.imooc.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,5 +30,10 @@ public class UserController {
 		return users;
 	}
 	
+	@GetMapping("/user/me")
+	public Object getCurrentUser(@AuthenticationPrincipal UserDetails user) {
+		
+		return user;
+	}
 	
 }
