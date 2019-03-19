@@ -21,6 +21,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.imooc.security.core.properties.SecurityProperties;
+import com.imooc.security.core.validate.code.image.ImgCode;
 
 public class ValidateCodeFilter extends OncePerRequestFilter implements InitializingBean{
 	
@@ -78,7 +79,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
 		if(imgCode == null) {
 			throw new ValidateCodeException("验证码不存在");
 		}
-		if(imgCode.isExpried()) {
+		if(imgCode.isExpired()) {
 			sessionStrategy.removeAttribute(requet, ValidateCodeController.SESSION_KEY);
 			throw new ValidateCodeException("验证码已过期");
 		}

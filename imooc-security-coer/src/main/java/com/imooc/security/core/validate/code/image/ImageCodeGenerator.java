@@ -1,4 +1,4 @@
-package com.imooc.security.core.validate.code;
+package com.imooc.security.core.validate.code.image;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -6,21 +6,21 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import com.imooc.security.core.properties.SecurityProperties;
+import com.imooc.security.core.validate.code.ValidateCodeGenerator;
 
 public class ImageCodeGenerator implements ValidateCodeGenerator{
 
 	private SecurityProperties securityProperties;
 	
 	@Override
-	public ImgCode createImgCode(HttpServletRequest request) {
+	public ImgCode generator(ServletWebRequest request) {
 		
-		int width = ServletRequestUtils.getIntParameter(request, "width", securityProperties.getValidateCode().getImageCode().getWidth());
-		int height = ServletRequestUtils.getIntParameter(request, "height", securityProperties.getValidateCode().getImageCode().getHeight());
+		int width = ServletRequestUtils.getIntParameter(request.getRequest(), "width", securityProperties.getValidateCode().getImageCode().getWidth());
+		int height = ServletRequestUtils.getIntParameter(request.getRequest(), "height", securityProperties.getValidateCode().getImageCode().getHeight());
 		int length = securityProperties.getValidateCode().getImageCode().getLength();
 		int expireIn = securityProperties.getValidateCode().getImageCode().getExpireIn();
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
