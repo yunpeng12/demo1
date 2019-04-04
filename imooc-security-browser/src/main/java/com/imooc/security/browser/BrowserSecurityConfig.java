@@ -12,12 +12,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
+import com.imooc.security.core.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
+import com.imooc.security.core.properties.SecurityConstants;
 import com.imooc.security.core.properties.SecurityProperties;
-import com.imooc.security.core.validate.code.ValidateCodeFilter;
+import com.imooc.security.core.validate.code.ValidateCodeSecurityConfig;
 
 @Configuration
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
@@ -37,6 +38,12 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
 	@Autowired
 	private UserDetailsService userDetailsService;
 	
+	@Autowired
+	private ValidateCodeSecurityConfig validateCodeSecurityConfig;
+	
+	@Autowired
+	private SmsCodeAuthenticationSecurityConfig smsCodeAuthenticationSecurityConfig;
+	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		
@@ -54,32 +61,31 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
-		validateCodeFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
-		validateCodeFilter.setSecurityProperties(securityProperties);
-		validateCodeFilter.afterPropertiesSet();
 		
-		
-		http.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
-		.formLogin()
-			.loginPage("/authentication/reuire")
-			.loginProcessingUrl("/authentication/form")
-			.successHandler(authenticationSuccessHandler)
-			.failureHandler(authenticationFailureHandler)
+		http.apply(validateCodeSecurityConfig)
 			.and()
-		.rememberMe()
-			.tokenRepository(persistentTokenRepository())
-			.tokenValiditySeconds(securityProperties.getBrowser().getRemenberMeSeconds())
-			.userDetailsService(userDetailsService)
+				.apply(smsCodeAuthenticationSecurityConfig)
 			.and()
-	    .authorizeRequests()
-			.antMatchers("/authentication/reuire","/code/img",
-					securityProperties.getBrowser().getLoginPage())
-			.permitAll()
-			.anyRequest()
-			.authenticated()
-			.and()
-			.csrf().disable();
+			.formLogin()
+				.loginPage("/authentication/reuire")
+				.loginProcessingUrl("/authentication/form")
+				.successHandler(authenticationSuccessHandler)
+				.failureHandler(authenticationFailureHandler)
+				.and()
+			.rememberMe()
+				.tokenRepository(persistentTokenRepository())
+				.tokenValiditySeconds(securityProperties.getBrowser().getRemenberMeSeconds())
+				.userDetailsService(userDetailsService)
+				.and()
+		    .authorizeRequests()
+				.antMatchers(SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_MOBILE,
+						SecurityConstants.DEFAULT_VALIDATE_CODE_URL_PREFIX+"/*",
+						securityProperties.getBrowser().getLoginPage())
+				.permitAll()
+				.anyRequest()
+				.authenticated()
+				.and()
+				.csrf().disable();
 		
 		
 	}
