@@ -50,7 +50,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
 		return new BCryptPasswordEncoder();
 	}
 	
-	@Bean//记住我功能
+	@Bean//记住我功能  test没发热放入
 	public PersistentTokenRepository persistentTokenRepository() {
 		
 		JdbcTokenRepositoryImpl jdbcTokenRepositoryImpl = new JdbcTokenRepositoryImpl();
