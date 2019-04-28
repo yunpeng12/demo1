@@ -14,14 +14,16 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.social.security.SpringSocialConfigurer;
 
+import com.imooc.security.core.authentication.AbstractChannelSecurityConfig;
 import com.imooc.security.core.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
 import com.imooc.security.core.properties.SecurityConstants;
 import com.imooc.security.core.properties.SecurityProperties;
 import com.imooc.security.core.validate.code.ValidateCodeSecurityConfig;
 
 @Configuration
-public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
+public class BrowserSecurityConfig extends AbstractChannelSecurityConfig{
 	
 	@Autowired
 	private SecurityProperties securityProperties;
@@ -44,6 +46,9 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
 	@Autowired
 	private SmsCodeAuthenticationSecurityConfig smsCodeAuthenticationSecurityConfig;
 	
+	@Autowired
+	private SpringSocialConfigurer imoocSocialSecurityConfig;
+	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		
@@ -62,15 +67,13 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
+		applyPasswordAuthenticationConfig(http);
+		
 		http.apply(validateCodeSecurityConfig)
-			.and()
-				.apply(smsCodeAuthenticationSecurityConfig)
-			.and()
-			.formLogin()
-				.loginPage("/authentication/reuire")
-				.loginProcessingUrl("/authentication/form")
-				.successHandler(authenticationSuccessHandler)
-				.failureHandler(authenticationFailureHandler)
+				.and()
+			.apply(smsCodeAuthenticationSecurityConfig)
+				.and()
+			.apply(imoocSocialSecurityConfig)
 				.and()
 			.rememberMe()
 				.tokenRepository(persistentTokenRepository())
